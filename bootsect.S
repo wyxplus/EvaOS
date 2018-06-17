@@ -4,14 +4,29 @@
 
 .equ BOOTSEG, 0x07c0
 
+.text
+
 # 16-real mode
 # SEG:OFFSET e.g 0x07c0:0x0000 -> SEG<<4 + OFFSET = 0x7c00
 
 ljmp $BOOTSEG, $_bootstart
 
 _bootstart:
-	jmp _bootstart
+	mov $0x03, %ah
+	int $0x10
 	
+	mov $BOOTSEG, %ax
+	mov %ax, %es
+	mov $_string, %bp
+	mov $0x1301, %ax
+	mov $0x000b, %bx
+	mov $12, %cx
+	int $0x10
+loop:	jmp loop
+
+_string:
+	.ascii "hello Eva!"	
+	.byte 13, 10	
 
 .= 510
 
